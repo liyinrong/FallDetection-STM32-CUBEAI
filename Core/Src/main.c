@@ -48,25 +48,6 @@
 #define GETCHAR_PROTOTYPE int fgetc(FILE *f)
 #endif /* __GNUC__ */
 
-PUTCHAR_PROTOTYPE
-{
-  while (HAL_OK != HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY))
-  {
-    ;
-  }
-  return ch;
-}
-
-GETCHAR_PROTOTYPE
-{
-  uint8_t ch = 0;
-  while (HAL_OK != HAL_UART_Receive(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY))
-  {
-    ;
-  }
-  return ch;
-}
-
 #define BSP_RET_CHECK(x)	do { if (x != BSP_ERROR_NONE)	Error_Handler(); } while(0)
 
 /* USER CODE END PD */
@@ -80,8 +61,8 @@ GETCHAR_PROTOTYPE
 
 /* USER CODE BEGIN PV */
 LSM6DSL_Object_t lsm6dsl_obj;
-CUSTOM_MOTION_SENSOR_Axes_t AccData, GyrData;
-uint8_t AccGyrReadRequest;
+CUSTOM_MOTION_SENSOR_Axes_t AccData, GyrData, MagData;
+uint8_t AccGyrReadRequest, MagReadRequest;
 
 /* USER CODE END PV */
 
@@ -129,7 +110,7 @@ int main(void)
   MX_X_CUBE_AI_Init();
   /* USER CODE BEGIN 2 */
   MX_MEMS_Init();
-  printf("リンクスタート！\n");
+  printf("リンクスタート！\r\n");
 
   /* USER CODE END 2 */
 
@@ -156,6 +137,7 @@ int main(void)
 //	  CUSTOM_MOTION_SENSOR_Read_Register(CUSTOM_LSM6DSL_0, LSM6DSL_FIFO_STATUS1, &ret_u8);
 //	  CUSTOM_MOTION_SENSOR_Read_Register(CUSTOM_LSM6DSL_0, LSM6DSL_FIFO_STATUS2, &ret_u8);
 //	  CUSTOM_MOTION_SENSOR_Read_Register(CUSTOM_LSM6DSL_0, LSM6DSL_FIFO_STATUS3, &ret_u8);
+//	  ret_32 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_8);
 	  if(AccGyrReadRequest)
 	  {
 		  for(uint8_t i=0; i<10; i++)
@@ -167,13 +149,18 @@ int main(void)
 			  CUSTOM_MOTION_SENSOR_FIFO_Get_Axis(CUSTOM_LSM6DSL_0, MOTION_ACCELERO, &AccData.y);
 			  CUSTOM_MOTION_SENSOR_FIFO_Get_Axis(CUSTOM_LSM6DSL_0, MOTION_ACCELERO, &AccData.z);
 		  }
-		  printf("AccGyr data fetched.\n");
+		  printf("AccGyr data fetched.\r\n");
 //		  HAL_UART_Transmit(&huart1, (uint8_t*)"A\r\n", 3, HAL_MAX_DELAY);
 		  AccGyrReadRequest = 0U;
 	  }
+//	  if(MagReadRequest)
+//	  {
+//		  CUSTOM_MOTION_SENSOR_GetAxes(CUSTOM_LIS3MDL_0, MOTION_MAGNETO, &MagData);
+//		  MagReadRequest = 0U;
+//	  }
     /* USER CODE END WHILE */
 
-//  MX_X_CUBE_AI_Process();
+  MX_X_CUBE_AI_Process();
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -230,6 +217,31 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+PUTCHAR_PROTOTYPE
+{
+  while (HAL_OK != HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY))
+  {
+    ;
+  }
+  return ch;
+}
+
+GETCHAR_PROTOTYPE
+{
+  uint8_t ch = 0;
+  while (HAL_OK != HAL_UART_Receive(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY))
+  {
+    ;
+  }
+  return ch;
+}
+
+__attribute__((weak)) int _write(int file, char* ptr, int len)
+{
+	HAL_UART_Transmit(&huart1, (uint8_t*)ptr, len, HAL_MAX_DELAY);
+	return len;
+}
+
 void MX_MEMS_Init(void)
 {
 	BSP_RET_CHECK(CUSTOM_MOTION_SENSOR_Init(CUSTOM_LSM6DSL_0, MOTION_ACCELERO));
@@ -248,12 +260,19 @@ void MX_MEMS_Init(void)
 	BSP_RET_CHECK(CUSTOM_MOTION_SENSOR_Write_Register(CUSTOM_LSM6DSL_0, LSM6DSL_INT1_CTRL, 0x8));
 	BSP_RET_CHECK(CUSTOM_MOTION_SENSOR_FIFO_Set_Mode(CUSTOM_LSM6DSL_0, LSM6DSL_STREAM_MODE));
 
+//	BSP_RET_CHECK(CUSTOM_MOTION_SENSOR_Init(CUSTOM_LIS3MDL_0, MOTION_MAGNETO));
+//	BSP_RET_CHECK(CUSTOM_MOTION_SENSOR_SetOutputDataRate(CUSTOM_LIS3MDL_0, MOTION_MAGNETO, 80.0f));
+//	BSP_RET_CHECK(CUSTOM_MOTION_SENSOR_SetFullScale(CUSTOM_LIS3MDL_0, MOTION_MAGNETO, 4));
+//	BSP_RET_CHECK(CUSTOM_MOTION_SENSOR_Write_Register(CUSTOM_LIS3MDL_0, LIS3MDL_CTRL_REG3, 0x0));
+
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
 	switch(GPIO_Pin)
 	{
+	case GPIO_PIN_8:
+		MagReadRequest = 1U;
 	case GPIO_PIN_11:
 		AccGyrReadRequest = 1U;
 		break;
