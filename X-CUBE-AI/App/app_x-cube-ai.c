@@ -54,32 +54,32 @@
 #include "app_x-cube-ai.h"
 #include "main.h"
 #include "ai_datatypes_defines.h"
-#include "tinyfallnet_qat.h"
-#include "tinyfallnet_qat_data.h"
+#include "tinyfallnet_6axis_qat.h"
+#include "tinyfallnet_6axis_qat_data.h"
 
 /* USER CODE BEGIN includes */
 /* USER CODE END includes */
 
 /* IO buffers ----------------------------------------------------------------*/
 
-#if !defined(AI_TINYFALLNET_QAT_INPUTS_IN_ACTIVATIONS)
-AI_ALIGNED(4) ai_i8 data_in_1[AI_TINYFALLNET_QAT_IN_1_SIZE_BYTES];
-ai_i8* data_ins[AI_TINYFALLNET_QAT_IN_NUM] = {
+#if !defined(AI_TINYFALLNET_6AXIS_QAT_INPUTS_IN_ACTIVATIONS)
+AI_ALIGNED(4) ai_i8 data_in_1[AI_TINYFALLNET_6AXIS_QAT_IN_1_SIZE_BYTES];
+ai_i8* data_ins[AI_TINYFALLNET_6AXIS_QAT_IN_NUM] = {
 data_in_1
 };
 #else
-ai_i8* data_ins[AI_TINYFALLNET_QAT_IN_NUM] = {
+ai_i8* data_ins[AI_TINYFALLNET_6AXIS_QAT_IN_NUM] = {
 NULL
 };
 #endif
 
-#if !defined(AI_TINYFALLNET_QAT_OUTPUTS_IN_ACTIVATIONS)
-AI_ALIGNED(4) ai_i8 data_out_1[AI_TINYFALLNET_QAT_OUT_1_SIZE_BYTES];
-ai_i8* data_outs[AI_TINYFALLNET_QAT_OUT_NUM] = {
+#if !defined(AI_TINYFALLNET_6AXIS_QAT_OUTPUTS_IN_ACTIVATIONS)
+AI_ALIGNED(4) ai_i8 data_out_1[AI_TINYFALLNET_6AXIS_QAT_OUT_1_SIZE_BYTES];
+ai_i8* data_outs[AI_TINYFALLNET_6AXIS_QAT_OUT_NUM] = {
 data_out_1
 };
 #else
-ai_i8* data_outs[AI_TINYFALLNET_QAT_OUT_NUM] = {
+ai_i8* data_outs[AI_TINYFALLNET_6AXIS_QAT_OUT_NUM] = {
 NULL
 };
 #endif
@@ -87,13 +87,13 @@ NULL
 /* Activations buffers -------------------------------------------------------*/
 
 AI_ALIGNED(32)
-static uint8_t pool0[AI_TINYFALLNET_QAT_DATA_ACTIVATION_1_SIZE];
+static uint8_t pool0[AI_TINYFALLNET_6AXIS_QAT_DATA_ACTIVATION_1_SIZE];
 
 ai_handle data_activations0[] = {pool0};
 
 /* AI objects ----------------------------------------------------------------*/
 
-static ai_handle tinyfallnet_qat = AI_HANDLE_NULL;
+static ai_handle tinyfallnet_6axis_qat = AI_HANDLE_NULL;
 
 static ai_buffer* ai_input;
 static ai_buffer* ai_output;
@@ -116,37 +116,37 @@ static int ai_boostrap(ai_handle *act_addr)
   ai_error err;
 
   /* Create and initialize an instance of the model */
-  err = ai_tinyfallnet_qat_create_and_init(&tinyfallnet_qat, act_addr, NULL);
+  err = ai_tinyfallnet_6axis_qat_create_and_init(&tinyfallnet_6axis_qat, act_addr, NULL);
   if (err.type != AI_ERROR_NONE) {
-    ai_log_err(err, "ai_tinyfallnet_qat_create_and_init");
+    ai_log_err(err, "ai_tinyfallnet_6axis_qat_create_and_init");
     return -1;
   }
 
-  ai_input = ai_tinyfallnet_qat_inputs_get(tinyfallnet_qat, NULL);
-  ai_output = ai_tinyfallnet_qat_outputs_get(tinyfallnet_qat, NULL);
+  ai_input = ai_tinyfallnet_6axis_qat_inputs_get(tinyfallnet_6axis_qat, NULL);
+  ai_output = ai_tinyfallnet_6axis_qat_outputs_get(tinyfallnet_6axis_qat, NULL);
 
-#if defined(AI_TINYFALLNET_QAT_INPUTS_IN_ACTIVATIONS)
+#if defined(AI_TINYFALLNET_6AXIS_QAT_INPUTS_IN_ACTIVATIONS)
   /*  In the case where "--allocate-inputs" option is used, memory buffer can be
    *  used from the activations buffer. This is not mandatory.
    */
-  for (int idx=0; idx < AI_TINYFALLNET_QAT_IN_NUM; idx++) {
+  for (int idx=0; idx < AI_TINYFALLNET_6AXIS_QAT_IN_NUM; idx++) {
 	data_ins[idx] = ai_input[idx].data;
   }
 #else
-  for (int idx=0; idx < AI_TINYFALLNET_QAT_IN_NUM; idx++) {
+  for (int idx=0; idx < AI_TINYFALLNET_6AXIS_QAT_IN_NUM; idx++) {
 	  ai_input[idx].data = data_ins[idx];
   }
 #endif
 
-#if defined(AI_TINYFALLNET_QAT_OUTPUTS_IN_ACTIVATIONS)
+#if defined(AI_TINYFALLNET_6AXIS_QAT_OUTPUTS_IN_ACTIVATIONS)
   /*  In the case where "--allocate-outputs" option is used, memory buffer can be
    *  used from the activations buffer. This is no mandatory.
    */
-  for (int idx=0; idx < AI_TINYFALLNET_QAT_OUT_NUM; idx++) {
+  for (int idx=0; idx < AI_TINYFALLNET_6AXIS_QAT_OUT_NUM; idx++) {
 	data_outs[idx] = ai_output[idx].data;
   }
 #else
-  for (int idx=0; idx < AI_TINYFALLNET_QAT_OUT_NUM; idx++) {
+  for (int idx=0; idx < AI_TINYFALLNET_6AXIS_QAT_OUT_NUM; idx++) {
 	ai_output[idx].data = data_outs[idx];
   }
 #endif
@@ -158,10 +158,10 @@ static int ai_run(void)
 {
   ai_i32 batch;
 
-  batch = ai_tinyfallnet_qat_run(tinyfallnet_qat, ai_input, ai_output);
+  batch = ai_tinyfallnet_6axis_qat_run(tinyfallnet_6axis_qat, ai_input, ai_output);
   if (batch != 1) {
-    ai_log_err(ai_tinyfallnet_qat_get_error(tinyfallnet_qat),
-        "ai_tinyfallnet_qat_run");
+    ai_log_err(ai_tinyfallnet_6axis_qat_get_error(tinyfallnet_6axis_qat),
+        "ai_tinyfallnet_6axis_qat_run");
     return -1;
   }
 
@@ -169,28 +169,44 @@ static int ai_run(void)
 }
 
 /* USER CODE BEGIN 2 */
-int acquire_and_process_data(ai_i8* data[])
+extern uint8_t NewDataFetched;
+extern float RecvBuffer[1][50][6];
+extern uint8_t RecvBufferPTR;
+extern uint8_t FallDetected;
+void pre_process(ai_i8* data[])
 {
-  /* fill the inputs of the c-model
-  for (int idx=0; idx < AI_TINYFALLNET_QAT_IN_NUM; idx++ )
-  {
-      data[idx] = ....
-  }
-
-  */
-  return 0;
+  memcpy(data[0], (uint8_t*)(RecvBuffer+RecvBufferPTR), (50-RecvBufferPTR)*sizeof(float));
+  memcpy(data[0]+(50-RecvBufferPTR)*sizeof(float), (uint8_t*)RecvBuffer, RecvBufferPTR*sizeof(float));
 }
 
-int post_process(ai_i8* data[])
+void post_process(ai_i8* data[])
 {
-  /* process the predictions
-  for (int idx=0; idx < AI_TINYFALLNET_QAT_OUT_NUM; idx++ )
-  {
-      data[idx] = ....
-  }
+	printf("output[0]=%d output[1]=%d\r\n", *data[0], *(data[0]+1));
+}
 
-  */
-  return 0;
+void DWT_Init(void)
+{
+  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+  DWT->CTRL &= ~DWT_CTRL_CYCCNTENA_Msk; /* Disable counter */
+}
+
+void DWT_Start(void)
+{
+  DWT->CYCCNT = 0; /* Clear count of clock cycles */
+  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk; /* Enable counter */
+}
+
+uint32_t DWT_Stop(void)
+{
+  volatile uint32_t cycles_count = 0U;
+  uint32_t system_core_clock_mhz = 0U;
+
+  DWT->CTRL &= ~DWT_CTRL_CYCCNTENA_Msk; /* Disable counter */
+  cycles_count = DWT->CYCCNT; /* Read count of clock cycles */
+
+  /* Calculate elapsed time in [us] */
+  system_core_clock_mhz = SystemCoreClock / 1000000U;
+  return cycles_count / system_core_clock_mhz;
 }
 /* USER CODE END 2 */
 
@@ -199,37 +215,35 @@ int post_process(ai_i8* data[])
 void MX_X_CUBE_AI_Init(void)
 {
     /* USER CODE BEGIN 5 */
-  printf("\r\nTEMPLATE - initialization\r\n");
+  printf("CUBE.AI initializing.\r\n");
 
   ai_boostrap(data_activations0);
+  DWT_Init();
+
+  printf("CUBE.AI initialized.\r\n");
     /* USER CODE END 5 */
 }
 
 void MX_X_CUBE_AI_Process(void)
 {
     /* USER CODE BEGIN 6 */
-  int res = -1;
+	uint32_t InferenceTime;
+	if(NewDataFetched)
+	{
+		pre_process(data_ins);
+		printf("CUBE.AI inference start.\r\n");
+		DWT_Start();
+		ai_run();
+		InferenceTime = DWT_Stop();
+		printf("CUBE.AI inference complete, elapsed time: %luns.\r\n", InferenceTime);
+		post_process(data_outs);
+		NewDataFetched = 0U;
+	}
 
-  printf("TEMPLATE - run - main loop\r\n");
-
-  if (tinyfallnet_qat) {
-
-    do {
-      /* 1 - acquire and pre-process input data */
-      res = acquire_and_process_data(data_ins);
-      /* 2 - process the data - call inference engine */
-      if (res == 0)
-        res = ai_run();
-      /* 3- post-process the predictions */
-      if (res == 0)
-        res = post_process(data_outs);
-    } while (res==0);
-  }
-
-  if (res) {
-    ai_error err = {AI_ERROR_INVALID_STATE, AI_ERROR_CODE_NETWORK};
-    ai_log_err(err, "Process has FAILED");
-  }
+//  if (res) {
+//    ai_error err = {AI_ERROR_INVALID_STATE, AI_ERROR_CODE_NETWORK};
+//    ai_log_err(err, "Process has FAILED");
+//  }
     /* USER CODE END 6 */
 }
 #ifdef __cplusplus
