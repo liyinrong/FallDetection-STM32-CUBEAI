@@ -290,10 +290,10 @@ void DataFetchHandle(void)
 	{
 		if(HostRequest)
 		{
-			printf("Echo.\r\n");
+			printf("Echo\r\n");
 			if(HAL_UART_Receive(&huart1, (uint8_t *)RecvBuffer, sizeof(RecvBuffer), HAL_MAX_DELAY) == HAL_OK)
 			{
-				printf("Data Received.\r\n");
+				printf("Data received.\r\n");
 				NewDataFetched = 1U;
 			}
 		}
