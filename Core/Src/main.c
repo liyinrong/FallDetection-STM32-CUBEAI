@@ -366,7 +366,7 @@ void DataFetchHandle(void)
 //				CUSTOM_MOTION_SENSOR_FIFO_Get_Axis(CUSTOM_LSM6DSL_0, MOTION_ACCELERO, &AccData.y);
 //				CUSTOM_MOTION_SENSOR_FIFO_Get_Axis(CUSTOM_LSM6DSL_0, MOTION_ACCELERO, &AccData.z);
 			}
-			printf("AccGyr data fetched.\r\n");
+//			printf("AccGyr data fetched.\r\n");
 			AccGyrRequest = 0U;
 			NewDataFetched = 1U;
 		}

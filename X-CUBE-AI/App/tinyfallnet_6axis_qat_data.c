@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    tinyfallnet_6axis_qat_data.c
   * @author  AST Embedded Analytics Research Platform
-  * @date    Sat Dec 16 05:57:55 2023
+  * @date    Sat Dec 16 14:23:13 2023
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * @attention
@@ -21,8 +21,8 @@
 AI_API_DECLARE_BEGIN
 ai_buffer g_tinyfallnet_6axis_qat_data_map_activations[AI_TINYFALLNET_6AXIS_QAT_DATA_ACTIVATIONS_COUNT] = {
   AI_BUFFER_INIT(AI_FLAG_NONE,  AI_BUFFER_FORMAT_U8,
-    AI_BUFFER_SHAPE_INIT(AI_SHAPE_BCWH, 4, 1, 8180, 1, 1),
-    8180, NULL, NULL),    /* heap_overlay_pool */
+    AI_BUFFER_SHAPE_INIT(AI_SHAPE_BCWH, 4, 1, 6644, 1, 1),
+    6644, NULL, NULL),    /* heap_overlay_pool */
   };
 ai_buffer g_tinyfallnet_6axis_qat_data_map_weights[AI_TINYFALLNET_6AXIS_QAT_DATA_WEIGHTS_COUNT] = {
   AI_BUFFER_INIT(AI_FLAG_NONE,  AI_BUFFER_FORMAT_U8,

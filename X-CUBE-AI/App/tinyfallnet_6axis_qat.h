@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    tinyfallnet_6axis_qat.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Sat Dec 16 05:57:55 2023
+  * @date    Sat Dec 16 14:23:13 2023
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * @attention
@@ -70,7 +70,7 @@ AI_DEPRECATED
 #define AI_TINYFALLNET_6AXIS_QAT_OUT_1_SIZE_BYTES  (2)
 
 /******************************************************************************/
-#define AI_TINYFALLNET_6AXIS_QAT_N_NODES (31)
+#define AI_TINYFALLNET_6AXIS_QAT_N_NODES (35)
 
 
 AI_API_DECLARE_BEGIN

@@ -184,7 +184,8 @@ void pre_process(ai_i8* data[])
 
 void post_process(ai_i8* data[])
 {
-	printf("output[0]=%d output[1]=%d\r\n", *data[0], *(data[0]+1));
+//	printf("output[0]=%d output[1]=%d\r\n", *data[0], *(data[0]+1));
+	printf("%d,%d\r\n", *data[0], *(data[0]+1));
 }
 
 void error_handler(void)
@@ -223,7 +224,7 @@ void MX_X_CUBE_AI_Process(void)
 	if(NewDataFetched)
 	{
 		pre_process(data_ins);
-		printf("CUBE.AI inference start.\r\n");
+//		printf("CUBE.AI inference start.\r\n");
 		DWT_Start();
 		res = ai_run();
 		InferenceTime = DWT_Stop();
@@ -232,7 +233,7 @@ void MX_X_CUBE_AI_Process(void)
 			printf("CUBE.AI inference failed, code %d.\r\n", res);
 			error_handler();
 		}
-		printf("CUBE.AI inference complete, elapsed time: %luus.\r\n", InferenceTime);
+//		printf("CUBE.AI inference complete, elapsed time: %luus.\r\n", InferenceTime);
 		post_process(data_outs);
 		NewDataFetched = 0U;
 	}

@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    tinyfallnet_6axis_qat_data_params.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Sat Dec 16 05:57:55 2023
+  * @date    Sat Dec 16 14:23:13 2023
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * Copyright (c) 2023 STMicroelectronics.
@@ -29,10 +29,10 @@
 
 
 #define AI_TINYFALLNET_6AXIS_QAT_DATA_ACTIVATIONS_SIZES \
-  { 8180, }
-#define AI_TINYFALLNET_6AXIS_QAT_DATA_ACTIVATIONS_SIZE     (8180)
+  { 6644, }
+#define AI_TINYFALLNET_6AXIS_QAT_DATA_ACTIVATIONS_SIZE     (6644)
 #define AI_TINYFALLNET_6AXIS_QAT_DATA_ACTIVATIONS_COUNT    (1)
-#define AI_TINYFALLNET_6AXIS_QAT_DATA_ACTIVATION_1_SIZE    (8180)
+#define AI_TINYFALLNET_6AXIS_QAT_DATA_ACTIVATION_1_SIZE    (6644)
 
 
 
