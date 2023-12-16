@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    tinyfallnet_6axis_qat_data_params.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Thu Dec 14 15:48:28 2023
+  * @date    Sat Dec 16 05:57:55 2023
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * Copyright (c) 2023 STMicroelectronics.

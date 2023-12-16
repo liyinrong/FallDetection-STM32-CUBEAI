@@ -6283,7 +6283,7 @@
         }
     ],
     "c_activations_count": 1,
-    "date_time": "Thu Dec 14 15:34:53 2023",
+    "date_time": "Sat Dec 16 02:19:17 2023",
     "model_name": "tinyfallnet_6axis_qat",
     "tool_version": {
         "major": 1,
@@ -6571,9 +6571,12 @@
             0,
             0
         ],
-        "series": "generic",
+        "series": "stm32l4",
         "activations": 8180,
-        "weights": 33160
+        "toolchain_flash": 3608,
+        "toolchain_ram": 0,
+        "weights": 33160,
+        "toolchain": "arm-none-eabi-gcc (GNU Tools for STM32 12.3.rel1.20231018-0815) 12.3.1 20230626"
     },
     "version": "1.2",
     "tool_api_version": {

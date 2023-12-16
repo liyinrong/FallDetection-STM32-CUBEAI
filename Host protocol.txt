@@ -1,6 +1,6 @@
 Host: Connect
 STM32: Echo
-Host sends 1*60*5 FP32 data
+Host sends 1*50*6 FP32 data
 STM32: Data received.
 STM32: CUBE.AI inference start.
 STM32: CUBE.AI inference complete, elapsed time: ?ns.

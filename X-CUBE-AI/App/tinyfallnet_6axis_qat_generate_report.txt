@@ -1,32 +1,32 @@
 Neural Network Tools for STM32 family v1.7.0 (stm.ai v8.1.0-19520)
-Created date          : 2023-12-14 15:48:28
-Parameters            : generate --name tinyfallnet_6axis_qat -m D:/Projects/MLonMCU/Final/saved_models/TinyFallNet_6axis_qat.tflite --type tflite --compression none --verbosity 1 --workspace C:\Users\liyin\AppData\Local\Temp\mxAI_workspace64791917661003199736531622643462 --output C:\Users\liyin\.stm32cubemx\network_output --allocate-inputs --series stm32l4 --allocate-outputs
+Created date          : 2023-12-16 05:57:56
+Parameters            : generate --name tinyfallnet_6axis_qat -m D:/Projects/MLonMCU/Final/saved_models/TinyFallNet_6axis_qat.tflite --type tflite --compression none --verbosity 1 --workspace C:\Users\liyin\AppData\Local\Temp\mxAI_workspace254951774237008560971005311539529 --output C:\Users\liyin\.stm32cubemx\network_output --allocate-inputs --series stm32l4 --allocate-outputs
 
 Exec/report summary (generate)
-----------------------------------------------------------------------------------------------------------
-model file         :   D:\Projects\MLonMCU\Final\saved_models\TinyFallNet_6axis_qat.tflite                
-type               :   tflite                                                                             
-c_name             :   tinyfallnet_6axis_qat                                                              
-compression        :   none                                                                               
-options            :   allocate-inputs, allocate-outputs                                                  
-optimization       :   balanced                                                                           
-target/series      :   stm32l4                                                                            
-workspace dir      :   C:\Users\liyin\AppData\Local\Temp\mxAI_workspace64791917661003199736531622643462   
-output dir         :   C:\Users\liyin\.stm32cubemx\network_output                                         
-model_fmt          :   ss/sa per channel                                                                  
-model_name         :   TinyFallNet_6axis_qat                                                              
-model_hash         :   5bbd008f7f245e305429e1fc54f2ab17                                                   
-params #           :   31,042 items (32.38 KiB)                                                           
-----------------------------------------------------------------------------------------------------------
-input 1/1          :   'serving_default_input_10' (domain:activations/**default**)                        
-                   :   300 items, 1.17 KiB, ai_float, float, (1,50,6)                                     
-output 1/1         :   'nl_31' (domain:activations/**default**)                                           
-                   :   2 items, 2 B, ai_i8, s=0.00390625, zp=-128, (1,2)                                  
-macc               :   738,616                                                                            
-weights (ro)       :   33,160 B (32.38 KiB) (1 segment) / -91,008(-73.3%) vs float model                  
-activations (rw)   :   8,180 B (7.99 KiB) (1 segment) *                                                   
-ram (total)        :   8,180 B (7.99 KiB) = 8,180 + 0 + 0                                                 
-----------------------------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------
+model file         :   D:\Projects\MLonMCU\Final\saved_models\TinyFallNet_6axis_qat.tflite                 
+type               :   tflite                                                                              
+c_name             :   tinyfallnet_6axis_qat                                                               
+compression        :   none                                                                                
+options            :   allocate-inputs, allocate-outputs                                                   
+optimization       :   balanced                                                                            
+target/series      :   stm32l4                                                                             
+workspace dir      :   C:\Users\liyin\AppData\Local\Temp\mxAI_workspace254951774237008560971005311539529   
+output dir         :   C:\Users\liyin\.stm32cubemx\network_output                                          
+model_fmt          :   ss/sa per channel                                                                   
+model_name         :   TinyFallNet_6axis_qat                                                               
+model_hash         :   5bbd008f7f245e305429e1fc54f2ab17                                                    
+params #           :   31,042 items (32.38 KiB)                                                            
+-----------------------------------------------------------------------------------------------------------
+input 1/1          :   'serving_default_input_10' (domain:activations/**default**)                         
+                   :   300 items, 1.17 KiB, ai_float, float, (1,50,6)                                      
+output 1/1         :   'nl_31' (domain:activations/**default**)                                            
+                   :   2 items, 2 B, ai_i8, s=0.00390625, zp=-128, (1,2)                                   
+macc               :   738,616                                                                             
+weights (ro)       :   33,160 B (32.38 KiB) (1 segment) / -91,008(-73.3%) vs float model                   
+activations (rw)   :   8,180 B (7.99 KiB) (1 segment) *                                                    
+ram (total)        :   8,180 B (7.99 KiB) = 8,180 + 0 + 0                                                  
+-----------------------------------------------------------------------------------------------------------
 (*) 'input'/'output' buffers can be used from the activations buffer
 
 Model name - TinyFallNet_6axis_qat ['serving_default_input_10'] ['nl_31']
