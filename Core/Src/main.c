@@ -78,6 +78,9 @@ uint8_t FallDetected = 0U;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+void DWT_Init(void);
+void DWT_Start(void);
+uint32_t DWT_Stop(void);
 void MX_MEMS_Init(void);
 void Peripheral_Reconfig(void);
 void DataFetchHandle(void);
@@ -121,6 +124,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_X_CUBE_AI_Init();
   /* USER CODE BEGIN 2 */
+  DWT_Init();
   MX_MEMS_Init();
   Peripheral_Reconfig();
   printf("リンクスタート！\r\n");
@@ -217,6 +221,31 @@ __attribute__((weak)) int _write(int file, char* ptr, int len)
 {
 	HAL_UART_Transmit(&huart1, (uint8_t*)ptr, len, HAL_MAX_DELAY);
 	return len;
+}
+
+void DWT_Init(void)
+{
+	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+	DWT->CTRL &= ~DWT_CTRL_CYCCNTENA_Msk; /* Disable counter */
+}
+
+void DWT_Start(void)
+{
+	DWT->CYCCNT = 0; /* Clear count of clock cycles */
+	DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk; /* Enable counter */
+}
+
+uint32_t DWT_Stop(void)
+{
+	volatile uint32_t cycles_count = 0U;
+	uint32_t system_core_clock_mhz = 0U;
+
+	DWT->CTRL &= ~DWT_CTRL_CYCCNTENA_Msk; /* Disable counter */
+	cycles_count = DWT->CYCCNT; /* Read count of clock cycles */
+
+	/* Calculate elapsed time in [us] */
+	system_core_clock_mhz = SystemCoreClock / 1000000U;
+	return cycles_count / system_core_clock_mhz;
 }
 
 void MX_MEMS_Init(void)

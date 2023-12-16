@@ -173,10 +173,13 @@ extern uint8_t NewDataFetched;
 extern float RecvBuffer[1][50][6];
 extern uint8_t RecvBufferPTR;
 extern uint8_t FallDetected;
+extern void DWT_Start(void);
+extern uint32_t DWT_Stop(void);
+
 void pre_process(ai_i8* data[])
 {
-  memcpy(data[0], (uint8_t*)(RecvBuffer+RecvBufferPTR), (50-RecvBufferPTR)*sizeof(float));
-  memcpy(data[0]+(50-RecvBufferPTR)*sizeof(float), (uint8_t*)RecvBuffer, RecvBufferPTR*sizeof(float));
+	memcpy(data[0], (uint8_t*)(RecvBuffer+RecvBufferPTR), (50-RecvBufferPTR)*sizeof(float));
+	memcpy(data[0]+(50-RecvBufferPTR)*sizeof(float), (uint8_t*)RecvBuffer, RecvBufferPTR*sizeof(float));
 }
 
 void post_process(ai_i8* data[])
@@ -184,29 +187,12 @@ void post_process(ai_i8* data[])
 	printf("output[0]=%d output[1]=%d\r\n", *data[0], *(data[0]+1));
 }
 
-void DWT_Init(void)
+void error_handler(void)
 {
-  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-  DWT->CTRL &= ~DWT_CTRL_CYCCNTENA_Msk; /* Disable counter */
-}
-
-void DWT_Start(void)
-{
-  DWT->CYCCNT = 0; /* Clear count of clock cycles */
-  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk; /* Enable counter */
-}
-
-uint32_t DWT_Stop(void)
-{
-  volatile uint32_t cycles_count = 0U;
-  uint32_t system_core_clock_mhz = 0U;
-
-  DWT->CTRL &= ~DWT_CTRL_CYCCNTENA_Msk; /* Disable counter */
-  cycles_count = DWT->CYCCNT; /* Read count of clock cycles */
-
-  /* Calculate elapsed time in [us] */
-  system_core_clock_mhz = SystemCoreClock / 1000000U;
-  return cycles_count / system_core_clock_mhz;
+	__disable_irq();
+	while (1)
+	{
+	}
 }
 /* USER CODE END 2 */
 
@@ -215,27 +201,38 @@ uint32_t DWT_Stop(void)
 void MX_X_CUBE_AI_Init(void)
 {
     /* USER CODE BEGIN 5 */
-  printf("CUBE.AI initializing.\r\n");
+	int res = 0;
+	printf("CUBE.AI initializing.\r\n");
 
-  ai_boostrap(data_activations0);
-  DWT_Init();
+	res = ai_boostrap(data_activations0);
 
-  printf("CUBE.AI initialized.\r\n");
+	if(res)
+	{
+		printf("CUBE.AI initialization failed, code %d.\r\n", res);
+		error_handler();
+	}
+	printf("CUBE.AI initialized.\r\n");
     /* USER CODE END 5 */
 }
 
 void MX_X_CUBE_AI_Process(void)
 {
     /* USER CODE BEGIN 6 */
+	int res = 0;
 	uint32_t InferenceTime;
 	if(NewDataFetched)
 	{
 		pre_process(data_ins);
 		printf("CUBE.AI inference start.\r\n");
 		DWT_Start();
-		ai_run();
+		res = ai_run();
 		InferenceTime = DWT_Stop();
-		printf("CUBE.AI inference complete, elapsed time: %luns.\r\n", InferenceTime);
+		if(res)
+		{
+			printf("CUBE.AI inference failed, code %d.\r\n", res);
+			error_handler();
+		}
+		printf("CUBE.AI inference complete, elapsed time: %luus.\r\n", InferenceTime);
 		post_process(data_outs);
 		NewDataFetched = 0U;
 	}
