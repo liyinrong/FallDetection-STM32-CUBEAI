@@ -229,12 +229,6 @@ GETCHAR_PROTOTYPE
   return ch;
 }
 
-__attribute__((weak)) int _write(int file, char* ptr, int len)
-{
-	HAL_UART_Transmit(&huart1, (uint8_t*)ptr, len, HAL_MAX_DELAY);
-	return len;
-}
-
 void DWT_Init(void)
 {
 	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
