@@ -326,11 +326,17 @@ void DataFetchHandle(void)
 		if(HostRequest)
 		{
 			printf("Echo\r\n");
-			if(HAL_UART_Receive(&huart1, (uint8_t *)RecvBuffer, sizeof(RecvBuffer), HAL_MAX_DELAY) == HAL_OK)
+			if(HAL_UART_Receive(&huart1, (uint8_t *)RecvBuffer, sizeof(RecvBuffer), 3000U) == HAL_OK)
 			{
 				printf("Data received.\r\n");
 				NewDataFetched = 1U;
 			}
+			else
+			{
+				printf("Transmission timeout.\r\n");
+			}
+			HostRequest = 0U;
+			HAL_UART_Receive_IT(&huart1, (uint8_t *)RecvBuffer, 9);
 		}
 	}
 	else if(WorkMode == 2U)
@@ -366,7 +372,7 @@ void DataFetchHandle(void)
 //				CUSTOM_MOTION_SENSOR_FIFO_Get_Axis(CUSTOM_LSM6DSL_0, MOTION_ACCELERO, &AccData.y);
 //				CUSTOM_MOTION_SENSOR_FIFO_Get_Axis(CUSTOM_LSM6DSL_0, MOTION_ACCELERO, &AccData.z);
 			}
-			printf("AccGyr data fetched.\r\n");
+//			printf("AccGyr data fetched.\r\n");
 			AccGyrRequest = 0U;
 			NewDataFetched = 1U;
 		}
@@ -443,7 +449,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 		{
 			HostRequest = 1U;
 		}
-		HAL_UART_Receive_IT(&huart1, (uint8_t *)RecvBuffer, 9);
 	}
 }
 

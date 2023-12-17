@@ -178,13 +178,13 @@ extern uint32_t DWT_Stop(void);
 
 void pre_process(ai_i8* data[])
 {
-	memcpy(data[0], (uint8_t*)(RecvBuffer+RecvBufferPTR), (50-RecvBufferPTR)*sizeof(float));
-	memcpy(data[0]+(50-RecvBufferPTR)*sizeof(float), (uint8_t*)RecvBuffer, RecvBufferPTR*sizeof(float));
+	memcpy(data[0], (uint8_t*)(&RecvBuffer[0][RecvBufferPTR][0]), 6*(50-RecvBufferPTR)*sizeof(float));
+	memcpy(data[0]+6*(50-RecvBufferPTR)*sizeof(float), (uint8_t*)RecvBuffer, 6*RecvBufferPTR*sizeof(float));
 }
 
 void post_process(ai_i8* data[])
 {
-	printf("output[0]=%d output[1]=%d\r\n", *data[0], *(data[0]+1));
+//	printf("output[0]=%d output[1]=%d\r\n", *data[0], *(data[0]+1));
 }
 
 void error_handler(void)
@@ -223,7 +223,7 @@ void MX_X_CUBE_AI_Process(void)
 	if(NewDataFetched)
 	{
 		pre_process(data_ins);
-		printf("CUBE.AI inference start.\r\n");
+//		printf("CUBE.AI inference start.\r\n");
 		DWT_Start();
 		res = ai_run();
 		InferenceTime = DWT_Stop();
@@ -232,8 +232,8 @@ void MX_X_CUBE_AI_Process(void)
 			printf("CUBE.AI inference failed, code %d.\r\n", res);
 			error_handler();
 		}
-		printf("CUBE.AI inference complete, elapsed time: %luus.\r\n", InferenceTime);
 		post_process(data_outs);
+		printf("CUBE.AI inference completed, output=[%d, %d], elapsed time: %luus.\r\n", *data_outs[0], *(data_outs[0]+1), InferenceTime);
 		NewDataFetched = 0U;
 	}
 
