@@ -223,17 +223,17 @@ void MX_X_CUBE_AI_Process(void)
 	if(NewDataFetched)
 	{
 		pre_process(data_ins);
-//		printf("CUBE.AI inference start.\r\n");
+//		printf("Inference start.\r\n");
 		DWT_Start();
 		res = ai_run();
 		InferenceTime = DWT_Stop();
 		if(res)
 		{
-			printf("CUBE.AI inference failed, code %d.\r\n", res);
+			printf("Inference failed, code %d.\r\n", res);
 			error_handler();
 		}
 		post_process(data_outs);
-		printf("CUBE.AI inference completed, output=[%d, %d], elapsed time: %luus.\r\n", *data_outs[0], *(data_outs[0]+1), InferenceTime);
+		printf("Inference completed, output=[%d, %d], elapsed time: %luus.\r\n", *data_outs[0], *(data_outs[0]+1), InferenceTime);
 		NewDataFetched = 0U;
 	}
 
