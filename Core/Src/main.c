@@ -26,6 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <string.h>
 #include "custom_motion_sensors.h"
 #include "custom_motion_sensors_ex.h"
 
@@ -336,7 +337,7 @@ void DataFetchHandle(void)
 			}
 			else
 			{
-				printf("Transmission timeout.\r\n");
+				printf("Transmission failed.\r\n");
 			}
 			HostRequest = 0U;
 			HAL_UART_Receive_IT(&huart1, (uint8_t *)RecvBuffer, 9);
@@ -366,7 +367,7 @@ void DataFetchHandle(void)
 				{
 					CUSTOM_MOTION_SENSOR_Read_Register(CUSTOM_LSM6DSL_0, LSM6DSL_FIFO_DATA_OUT_L, temp_u8);
 					CUSTOM_MOTION_SENSOR_Read_Register(CUSTOM_LSM6DSL_0, LSM6DSL_FIFO_DATA_OUT_H, temp_u8+1);
-					RecvBuffer[0][RecvBufferPTR][j] = (int16_t)(((int16_t)temp_u8[1] << 8) | (int16_t)temp_u8[0]) * (LSM6DSL_ACC_SENSITIVITY_FS_4G * 0.001f);
+					RecvBuffer[0][RecvBufferPTR][j] = (int16_t)(((int16_t)temp_u8[1] << 8) | temp_u8[0]) * (LSM6DSL_ACC_SENSITIVITY_FS_4G * 0.001f);
 				}
 				RecvBuffer[0][RecvBufferPTR][2] = -RecvBuffer[0][RecvBufferPTR][2];
 				RecvBufferPTR = (RecvBufferPTR + 1U) % 50U;
