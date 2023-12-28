@@ -28,6 +28,9 @@ extern "C" {
 void MX_X_CUBE_AI_Init(void);
 void MX_X_CUBE_AI_Process(void);
 /* USER CODE BEGIN includes */
+//#define FLOAT_MODEL_INPUT
+//#define FLOAT_MODEL_OUTPUT
+
 /* USER CODE END includes */
 #ifdef __cplusplus
 }

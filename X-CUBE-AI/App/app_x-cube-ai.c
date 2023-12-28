@@ -170,16 +170,22 @@ static int ai_run(void)
 
 /* USER CODE BEGIN 2 */
 extern uint8_t NewDataFetched;
-extern float RecvBuffer[1][50][6];
-extern uint8_t RecvBufferPTR;
 extern uint8_t FallDetected;
+
+#ifdef FLOAT_MODEL_INPUT
+extern float RecvBuffer[1][50][6];
+#else
+extern int8_t RecvBuffer[1][50][6];
+#endif
+extern uint8_t RecvBufferPTR;
+
 extern void DWT_Start(void);
 extern uint32_t DWT_Stop(void);
 
 void pre_process(ai_i8* data[])
 {
-	memcpy(data[0], (uint8_t*)(&RecvBuffer[0][RecvBufferPTR][0]), 6*(50-RecvBufferPTR)*sizeof(float));
-	memcpy(data[0]+6*(50-RecvBufferPTR)*sizeof(float), (uint8_t*)RecvBuffer, 6*RecvBufferPTR*sizeof(float));
+	memcpy(data[0], (uint8_t*)(&RecvBuffer[0][RecvBufferPTR][0]), (50-RecvBufferPTR)*(6*sizeof(RecvBuffer[0][0][0])));
+	memcpy(data[0]+(50-RecvBufferPTR)*(6*sizeof(RecvBuffer[0][0][0])), (uint8_t*)RecvBuffer, RecvBufferPTR*(6*sizeof(RecvBuffer[0][0][0])));
 }
 
 void post_process(ai_i8* data[])
@@ -235,7 +241,11 @@ void MX_X_CUBE_AI_Process(void)
 			error_handler();
 		}
 		post_process(data_outs);
-		printf("Inference completed, output=[%d, %d], elapsed time: %luus.\r\n", *data_outs[0], *(data_outs[0]+1), InferenceTime);
+		#ifdef FLOAT_MODEL_OUTPUT
+		printf("Inference completed, output=[%f, %f], elapsed time: %luus.\r\n", *(float*)(data_outs[0]), *((float*)(data_outs[0])+1), InferenceTime);
+		#else
+		printf("Inference completed, output=[%d, %d], elapsed time: %luus.\r\n", *(int8_t*)(data_outs[0]), *((int8_t*)(data_outs[0])+1), InferenceTime);
+		#endif
 		NewDataFetched = 0U;
 	}
 

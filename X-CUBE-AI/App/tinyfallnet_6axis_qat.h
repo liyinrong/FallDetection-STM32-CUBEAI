@@ -2,7 +2,7 @@
   ******************************************************************************
   * @file    tinyfallnet_6axis_qat.h
   * @author  AST Embedded Analytics Research Platform
-  * @date    Tue Dec 26 05:57:20 2023
+  * @date    Thu Dec 28 09:42:17 2023
   * @brief   AI Tool Automatic Code Generator for Embedded NN computing
   ******************************************************************************
   * @attention
@@ -25,7 +25,7 @@
 
 /******************************************************************************/
 #define AI_TINYFALLNET_6AXIS_QAT_MODEL_NAME          "tinyfallnet_6axis_qat"
-#define AI_TINYFALLNET_6AXIS_QAT_ORIGIN_MODEL_NAME   "tinyfallnet_6axis_qat"
+#define AI_TINYFALLNET_6AXIS_QAT_ORIGIN_MODEL_NAME   "tinyfallnet_6axis_qat_fullint_rescaled"
 
 /******************************************************************************/
 #define AI_TINYFALLNET_6AXIS_QAT_ACTIVATIONS_ALIGNMENT   (4)
@@ -45,11 +45,11 @@ AI_DEPRECATED
 #define AI_TINYFALLNET_6AXIS_QAT_IN_SIZE_BYTES { \
   AI_TINYFALLNET_6AXIS_QAT_IN_1_SIZE_BYTES, \
 }
-#define AI_TINYFALLNET_6AXIS_QAT_IN_1_FORMAT      AI_BUFFER_FORMAT_FLOAT
+#define AI_TINYFALLNET_6AXIS_QAT_IN_1_FORMAT      AI_BUFFER_FORMAT_S8
 #define AI_TINYFALLNET_6AXIS_QAT_IN_1_HEIGHT      (50)
 #define AI_TINYFALLNET_6AXIS_QAT_IN_1_CHANNEL     (6)
 #define AI_TINYFALLNET_6AXIS_QAT_IN_1_SIZE        (50 * 6)
-#define AI_TINYFALLNET_6AXIS_QAT_IN_1_SIZE_BYTES  (1200)
+#define AI_TINYFALLNET_6AXIS_QAT_IN_1_SIZE_BYTES  (300)
 
 /******************************************************************************/
 #define AI_TINYFALLNET_6AXIS_QAT_OUT_NUM       (1)
@@ -70,7 +70,7 @@ AI_DEPRECATED
 #define AI_TINYFALLNET_6AXIS_QAT_OUT_1_SIZE_BYTES  (2)
 
 /******************************************************************************/
-#define AI_TINYFALLNET_6AXIS_QAT_N_NODES (31)
+#define AI_TINYFALLNET_6AXIS_QAT_N_NODES (30)
 
 
 AI_API_DECLARE_BEGIN
