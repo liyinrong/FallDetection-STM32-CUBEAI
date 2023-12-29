@@ -58,6 +58,8 @@
 #include "tinyfallnet_6axis_qat_data.h"
 
 /* USER CODE BEGIN includes */
+#include "ai_platform_interface.h"
+
 /* USER CODE END includes */
 
 /* IO buffers ----------------------------------------------------------------*/
@@ -169,6 +171,18 @@ static int ai_run(void)
 }
 
 /* USER CODE BEGIN 2 */
+#ifdef PROFILING
+#define MAX_EVENTS	128
+struct u_observer_ctx {
+	ai_u16 ids_[MAX_EVENTS];
+	ai_u16 types_[MAX_EVENTS];
+	uint32_t start_ticks_[MAX_EVENTS];
+	uint32_t end_ticks_[MAX_EVENTS];
+	int num_events_;
+};
+struct u_observer_ctx u_observer_ctx;
+#endif
+
 extern uint8_t NewDataFetched;
 extern uint8_t FallDetected;
 
@@ -182,24 +196,66 @@ extern uint8_t RecvBufferPTR;
 extern void DWT_Start(void);
 extern uint32_t DWT_Stop(void);
 
-void pre_process(ai_i8* data[])
+static void pre_process(ai_i8* data[])
 {
 	memcpy(data[0], (uint8_t*)(&RecvBuffer[0][RecvBufferPTR][0]), (50-RecvBufferPTR)*(6*sizeof(RecvBuffer[0][0][0])));
 	memcpy(data[0]+(50-RecvBufferPTR)*(6*sizeof(RecvBuffer[0][0][0])), (uint8_t*)RecvBuffer, RecvBufferPTR*(6*sizeof(RecvBuffer[0][0][0])));
 }
 
-void post_process(ai_i8* data[])
+static void post_process(ai_i8* data[])
 {
 //	printf("output[0]=%d output[1]=%d\r\n", *data[0], *(data[0]+1));
 }
 
-void error_handler(void)
+static void error_handler(void)
 {
 	__disable_irq();
 	while (1)
 	{
 	}
 }
+
+#ifdef PROFILING
+static ai_u32 u_observer_cb(const ai_handle cookie, const ai_u32 flags, const ai_observer_node *node)
+{
+	struct u_observer_ctx *ctx = (struct u_observer_ctx *)cookie;
+	if(flags & AI_OBSERVER_PRE_EVT)
+	{
+		if(ctx->num_events_ == MAX_EVENTS)
+		{
+			printf("Profiling failed because number of events exceeded the limit.\r\n");
+			error_handler();
+		}
+		ctx->ids_[ctx->num_events_] = node->id;
+		ctx->types_[ctx->num_events_] = node->type;
+		ctx->start_ticks_[ctx->num_events_] = DWT->CYCCNT;
+	}
+	else
+	{
+		ctx->end_ticks_[ctx->num_events_] = DWT->CYCCNT;
+		ctx->num_events_++;
+	}
+	return 0;
+}
+
+static void u_observer_log(const ai_handle cookie)
+{
+	struct u_observer_ctx *ctx = (struct u_observer_ctx *)cookie;
+	uint32_t ticks;
+	printf("\"Event\",\"ID\",\"Type\",\"Ticks\"\r\n");
+	for(int i=0; i<ctx->num_events_; i++)
+	{
+		ticks = ctx->end_ticks_[i] - ctx->start_ticks_[i];
+		printf("%d,%u,%u,%lu\r\n", i, ctx->ids_[i], ctx->types_[i], ticks);
+	}
+}
+
+static void u_observer_reset(const ai_handle cookie)
+{
+	struct u_observer_ctx *ctx = (struct u_observer_ctx *)cookie;
+	ctx->num_events_ = 0;
+}
+#endif
 
 /* USER CODE END 2 */
 
@@ -212,12 +268,20 @@ void MX_X_CUBE_AI_Init(void)
 	printf("CUBE.AI initializing.\r\n");
 
 	res = ai_boostrap(data_activations0);
-
 	if(res)
 	{
 		printf("CUBE.AI initialization failed, code %d.\r\n", res);
 		error_handler();
 	}
+	#ifdef PROFILING
+	if (!ai_platform_observer_register(tinyfallnet_6axis_qat,
+	     u_observer_cb, &u_observer_ctx,
+	     AI_OBSERVER_PRE_EVT | AI_OBSERVER_POST_EVT))
+	{
+	    printf("CUBE.AI observer registration failed.\r\n");
+	    error_handler();
+	}
+	#endif
 	printf("CUBE.AI initialized.\r\n");
 
     /* USER CODE END 5 */
@@ -231,6 +295,9 @@ void MX_X_CUBE_AI_Process(void)
 	if(NewDataFetched)
 	{
 		pre_process(data_ins);
+		#ifdef PROFILING
+		u_observer_reset(&u_observer_ctx);
+		#endif
 //		printf("Inference start.\r\n");
 		DWT_Start();
 		res = ai_run();
@@ -245,6 +312,10 @@ void MX_X_CUBE_AI_Process(void)
 		printf("Inference completed, output=[%f, %f], elapsed time: %luus.\r\n", *(float*)(data_outs[0]), *((float*)(data_outs[0])+1), InferenceTime);
 		#else
 		printf("Inference completed, output=[%d, %d], elapsed time: %luus.\r\n", *(int8_t*)(data_outs[0]), *((int8_t*)(data_outs[0])+1), InferenceTime);
+		#endif
+		#ifdef PROFILING
+		printf("Profiling log:\r\n");
+		u_observer_log(&u_observer_ctx);
 		#endif
 		NewDataFetched = 0U;
 	}
