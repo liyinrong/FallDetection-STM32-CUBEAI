@@ -246,7 +246,7 @@ static void u_observer_log(const ai_handle cookie)
 	for(int i=0; i<ctx->num_events_; i++)
 	{
 		ticks = ctx->end_ticks_[i] - ctx->start_ticks_[i];
-		printf("%d,%u,%u,%lu\r\n", i, ctx->ids_[i], ctx->types_[i], ticks);
+		printf("%d,%u,0x%x,%lu\r\n", i, ctx->ids_[i], ctx->types_[i], ticks);
 	}
 }
 
